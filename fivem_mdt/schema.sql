@@ -1,0 +1,38 @@
+CREATE TABLE IF NOT EXISTS mdt_profiles (
+    citizenid VARCHAR(64) PRIMARY KEY,
+    callsign VARCHAR(32) DEFAULT NULL,
+    rank_title VARCHAR(64) DEFAULT NULL,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS mdt_warrants (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    suspect_name VARCHAR(128) NOT NULL,
+    suspect_cid VARCHAR(64) DEFAULT NULL,
+    charges LONGTEXT,
+    notes TEXT,
+    created_by VARCHAR(128) NOT NULL,
+    status VARCHAR(16) NOT NULL DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS mdt_bolos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(128) NOT NULL,
+    notes TEXT,
+    vehicle_plate VARCHAR(16) DEFAULT NULL,
+    status VARCHAR(16) NOT NULL DEFAULT 'active',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS ems_cases (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    patient_cid VARCHAR(64) NOT NULL,
+    summary TEXT,
+    injury_type VARCHAR(64),
+    treatment TEXT,
+    severity VARCHAR(32),
+    created_by VARCHAR(128) NOT NULL,
+    status VARCHAR(16) NOT NULL DEFAULT 'open',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);

@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <title>RadioSystem MDT</title>
+</head>
+<body>
+  <div id="app" class="hidden">
+    <header>
+      <h1>Agency Computer System</h1>
+      <button id="close">Close</button>
+    </header>
+    <section id="meta"></section>
+    <section>
+      <h2>Dispatch</h2>
+      <button id="dispatchToggle">Toggle Dispatcher Duty</button>
+      <ul id="dispatchCalls"></ul>
+    </section>
+    <section id="policePanel" class="hidden">
+      <h2>Police MDT</h2>
+      <input id="warrantName" placeholder="Suspect Name" />
+      <input id="warrantCid" placeholder="Suspect CID" />
+      <textarea id="warrantNotes" placeholder="Notes"></textarea>
+      <button id="createWarrant">Create Warrant</button>
+    </section>
+    <section id="emsPanel" class="hidden">
+      <h2>EMS System</h2>
+      <input id="patientCid" placeholder="Patient CID" />
+      <input id="severity" placeholder="Severity" />
+      <textarea id="summary" placeholder="Medical Summary"></textarea>
+      <button id="createCase">Create EMS Case</button>
+    </section>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
