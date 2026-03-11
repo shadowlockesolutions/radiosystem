@@ -1,5 +1,4 @@
 local QBCore = exports[Config.Core]:GetCoreObject()
-local uiOpen = false
 
 local function openMDT()
     QBCore.Functions.TriggerCallback('rs_mdt:server:getBootstrap', function(data)
@@ -8,12 +7,8 @@ local function openMDT()
             return
         end
 
-        uiOpen = true
         SetNuiFocus(true, true)
-        SendNUIMessage({
-            action = 'open',
-            payload = data
-        })
+        SendNUIMessage({ action = 'open', payload = data })
     end)
 end
 
@@ -22,13 +17,17 @@ RegisterCommand(Config.Command, function()
 end)
 
 RegisterNUICallback('close', function(_, cb)
-    uiOpen = false
     SetNuiFocus(false, false)
     cb(true)
 end)
 
 RegisterNUICallback('setDispatchStatus', function(data, cb)
     TriggerServerEvent('rs_mdt:server:setDispatchStatus', data.active == true)
+    cb(true)
+end)
+
+RegisterNUICallback('setBodycamStatus', function(data, cb)
+    TriggerServerEvent('rs_mdt:server:setBodycamStatus', data)
     cb(true)
 end)
 
@@ -42,9 +41,25 @@ RegisterNUICallback('createEMSCase', function(data, cb)
     cb(true)
 end)
 
+RegisterNUICallback('saveSuspect', function(data, cb)
+    TriggerServerEvent('rs_mdt:server:saveSuspect', data)
+    cb(true)
+end)
+
+RegisterNUICallback('updateOfficer', function(data, cb)
+    TriggerServerEvent('rs_mdt:server:updateOfficer', data)
+    cb(true)
+end)
+
 RegisterNUICallback('manualDispatch', function(data, cb)
     TriggerServerEvent('rs_mdt:server:submitManualDispatch', data.callType, data.payload)
     cb(true)
+end)
+
+RegisterNUICallback('refresh', function(_, cb)
+    QBCore.Functions.TriggerCallback('rs_mdt:server:getBootstrap', function(data)
+        cb(data)
+    end)
 end)
 
 RegisterNetEvent('rs_mdt:client:dispatchCall', function(call)

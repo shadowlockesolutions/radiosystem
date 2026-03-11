@@ -4,6 +4,9 @@ Advanced MDT resource with:
 - Police MDT login/system
 - EMS-only login/system tied to same backend data platform
 - Adaptive dispatch automation that is suppressed when dispatchers are active
+- Suspect biometrics/intel records (photo, fingerprint, DNA, risk, parole, notes)
+- Officer roster management with rank, portrait, and badge image assignment
+- Live bodycam directory with stream links inside MDT
 
 ## Install
 1. Copy `fivem_mdt` to your server resources as `rs_mdt`.
@@ -17,6 +20,10 @@ Advanced MDT resource with:
 - If no dispatchers are online, auto-dispatch will route calls after delay.
 - Delay can be configured and scales based on dispatcher count values.
 
+## Bodycam model
+- Officers/EMS can toggle live stream status from MDT by entering a stream URL.
+- Active streams are listed for command staff/users in MDT and can be opened directly.
+
 ## Security
-- Server verifies role before creating police/EMS records.
+- Server verifies role before creating/updating police/EMS records.
 - Dispatcher console requires configured dispatch roles/grades.

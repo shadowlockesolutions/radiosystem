@@ -1,6 +1,7 @@
 local QBCore = exports[Config.Core]:GetCoreObject()
 
 local ActiveDispatchers = {}
+local ActiveBodycams = {}
 local PendingAutoDispatch = {}
 
 local function hasJobInGroup(player, group)
@@ -45,6 +46,16 @@ local function canUseDispatchConsole(src)
     return hasJobInGroup(player, 'Dispatch')
 end
 
+local function sanitizeBodycams()
+    for src, cam in pairs(ActiveBodycams) do
+        if GetPlayerPing(src) <= 0 then
+            ActiveBodycams[src] = nil
+        else
+            cam.playerName = GetPlayerName(src)
+        end
+    end
+end
+
 local function pushCallToJobs(callType, payload)
     local eventCfg = Config.AutoDispatch.events[callType]
     if not eventCfg then return end
@@ -66,9 +77,7 @@ local function scheduleAutoDispatch(callType, payload)
     if not Config.AutoDispatch.enabled then return end
 
     local dispatchers = getDispatchersOnline()
-    if dispatchers > 0 then
-        return
-    end
+    if dispatchers > 0 then return end
 
     local delay = Config.AutoDispatch.baseDelaySeconds
     delay = delay + (dispatchers * Config.AutoDispatch.perDispatcherDelayBonus)
@@ -80,7 +89,6 @@ local function scheduleAutoDispatch(callType, payload)
     SetTimeout(delay * 1000, function()
         if not PendingAutoDispatch[ticket] then return end
         PendingAutoDispatch[ticket] = nil
-
         if getDispatchersOnline() == 0 then
             pushCallToJobs(callType, payload)
         end
@@ -95,8 +103,29 @@ RegisterNetEvent('rs_mdt:server:setDispatchStatus', function(isOnDutyDispatch)
     end
 end)
 
+RegisterNetEvent('rs_mdt:server:setBodycamStatus', function(data)
+    local src = source
+    local role = getRole(src)
+    if role ~= 'police' and role ~= 'ems' then return end
+
+    if data and data.active and data.stream_url and data.stream_url ~= '' then
+        local player = QBCore.Functions.GetPlayer(src)
+        ActiveBodycams[src] = {
+            source = src,
+            citizenid = player.PlayerData.citizenid,
+            role = role,
+            stream_url = data.stream_url,
+            callsign = data.callsign or '',
+            playerName = GetPlayerName(src)
+        }
+    else
+        ActiveBodycams[src] = nil
+    end
+end)
+
 AddEventHandler('playerDropped', function()
     ActiveDispatchers[source] = nil
+    ActiveBodycams[source] = nil
 end)
 
 QBCore.Functions.CreateCallback('rs_mdt:server:getBootstrap', function(source, cb)
@@ -109,10 +138,26 @@ QBCore.Functions.CreateCallback('rs_mdt:server:getBootstrap', function(source, c
     local player = QBCore.Functions.GetPlayer(source)
     local cid = player.PlayerData.citizenid
 
-    local warrants = MySQL.query.await('SELECT id, suspect_name, charges, status, created_at FROM mdt_warrants WHERE status = ? ORDER BY created_at DESC LIMIT 50', { 'active' })
+    local warrants = MySQL.query.await('SELECT id, suspect_name, suspect_cid, charges, notes, status, created_at FROM mdt_warrants WHERE status = ? ORDER BY created_at DESC LIMIT 50', { 'active' })
     local bolos = MySQL.query.await('SELECT id, title, notes, vehicle_plate, status, created_at FROM mdt_bolos WHERE status = ? ORDER BY created_at DESC LIMIT 50', { 'active' })
-    local emsCases = MySQL.query.await('SELECT id, patient_cid, summary, severity, status, created_at FROM ems_cases ORDER BY created_at DESC LIMIT 50')
-    local profile = MySQL.single.await('SELECT callsign, rank_title FROM mdt_profiles WHERE citizenid = ?', { cid })
+    local emsCases = MySQL.query.await('SELECT id, patient_cid, summary, injury_type, severity, status, created_at FROM ems_cases ORDER BY created_at DESC LIMIT 50')
+    local suspects = MySQL.query.await('SELECT id, suspect_cid, first_name, last_name, dob, photo_url, fingerprint_url, dna_profile, phone, address, parole_status, risk_level, notes, updated_at FROM mdt_suspects ORDER BY updated_at DESC LIMIT 100')
+    local profile = MySQL.single.await('SELECT callsign, rank_title, badge_image_url, profile_image_url FROM mdt_profiles WHERE citizenid = ?', { cid })
+
+    local officers = MySQL.query.await([[
+        SELECT p.citizenid, p.callsign, p.rank_title, p.badge_image_url, p.profile_image_url,
+               c.charinfo
+        FROM mdt_profiles p
+        LEFT JOIN players c ON c.citizenid = p.citizenid
+        ORDER BY p.rank_title ASC, p.callsign ASC
+        LIMIT 200
+    ]])
+
+    sanitizeBodycams()
+    local bodycams = {}
+    for _, cam in pairs(ActiveBodycams) do
+        bodycams[#bodycams + 1] = cam
+    end
 
     cb({
         allowed = true,
@@ -121,7 +166,10 @@ QBCore.Functions.CreateCallback('rs_mdt:server:getBootstrap', function(source, c
         dispatchersOnline = getDispatchersOnline(),
         warrants = warrants,
         bolos = bolos,
-        emsCases = emsCases
+        emsCases = emsCases,
+        suspects = suspects,
+        officers = officers,
+        bodycams = bodycams
     })
 end)
 
@@ -155,6 +203,63 @@ RegisterNetEvent('rs_mdt:server:createEMSCase', function(data)
         data.treatment,
         data.severity,
         GetPlayerName(src)
+    })
+end)
+
+RegisterNetEvent('rs_mdt:server:saveSuspect', function(data)
+    local src = source
+    if getRole(src) ~= 'police' then return end
+
+    MySQL.query.await([[
+        INSERT INTO mdt_suspects
+            (suspect_cid, first_name, last_name, dob, photo_url, fingerprint_url, dna_profile, phone, address, parole_status, risk_level, notes)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+            first_name = VALUES(first_name),
+            last_name = VALUES(last_name),
+            dob = VALUES(dob),
+            photo_url = VALUES(photo_url),
+            fingerprint_url = VALUES(fingerprint_url),
+            dna_profile = VALUES(dna_profile),
+            phone = VALUES(phone),
+            address = VALUES(address),
+            parole_status = VALUES(parole_status),
+            risk_level = VALUES(risk_level),
+            notes = VALUES(notes)
+    ]], {
+        data.suspect_cid,
+        data.first_name,
+        data.last_name,
+        data.dob,
+        data.photo_url,
+        data.fingerprint_url,
+        data.dna_profile,
+        data.phone,
+        data.address,
+        data.parole_status,
+        data.risk_level,
+        data.notes
+    })
+end)
+
+RegisterNetEvent('rs_mdt:server:updateOfficer', function(data)
+    local src = source
+    if getRole(src) ~= 'police' then return end
+
+    MySQL.query.await([[
+        INSERT INTO mdt_profiles (citizenid, callsign, rank_title, badge_image_url, profile_image_url)
+        VALUES (?, ?, ?, ?, ?)
+        ON DUPLICATE KEY UPDATE
+            callsign = VALUES(callsign),
+            rank_title = VALUES(rank_title),
+            badge_image_url = VALUES(badge_image_url),
+            profile_image_url = VALUES(profile_image_url)
+    ]], {
+        data.citizenid,
+        data.callsign,
+        data.rank_title,
+        data.badge_image_url,
+        data.profile_image_url
     })
 end)
 
