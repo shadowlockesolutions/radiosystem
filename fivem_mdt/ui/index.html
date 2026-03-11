@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <title>RadioSystem MDT</title>
+</head>
+<body>
+  <div id="app" class="hidden">
+    <header>
+      <h1>Agency Computer System</h1>
+      <div class="actions">
+        <button id="refresh">Refresh</button>
+        <button id="close">Close</button>
+      </div>
+    </header>
+
+    <section id="meta"></section>
+
+    <section>
+      <h2>Dispatch + Bodycam</h2>
+      <div class="grid-two">
+        <div>
+          <button id="dispatchToggle">Toggle Dispatcher Duty</button>
+          <input id="bodycamUrl" placeholder="Bodycam Stream URL (HLS/WebRTC page)" />
+          <button id="bodycamToggle">Toggle Bodycam Broadcast</button>
+        </div>
+        <div>
+          <h3>Incoming Calls</h3>
+          <ul id="dispatchCalls"></ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="policePanel" class="hidden">
+      <h2>Police MDT</h2>
+      <div class="grid-two">
+        <div>
+          <h3>Create Warrant</h3>
+          <input id="warrantName" placeholder="Suspect Name" />
+          <input id="warrantCid" placeholder="Suspect CID" />
+          <textarea id="warrantNotes" placeholder="Notes"></textarea>
+          <button id="createWarrant">Create Warrant</button>
+
+          <h3>Suspect Profile</h3>
+          <input id="suspectCid" placeholder="Suspect CID" />
+          <input id="suspectFirstName" placeholder="First Name" />
+          <input id="suspectLastName" placeholder="Last Name" />
+          <input id="suspectDob" placeholder="DOB" />
+          <input id="suspectPhoto" placeholder="Suspect Photo URL" />
+          <input id="suspectPrint" placeholder="Fingerprint Image URL" />
+          <input id="suspectDna" placeholder="DNA Profile ID" />
+          <input id="suspectPhone" placeholder="Phone" />
+          <input id="suspectAddress" placeholder="Address" />
+          <input id="suspectParole" placeholder="Parole Status" />
+          <input id="suspectRisk" placeholder="Risk Level" />
+          <textarea id="suspectNotes" placeholder="Additional intel"></textarea>
+          <button id="saveSuspect">Save Suspect</button>
+        </div>
+        <div>
+          <h3>Suspects</h3>
+          <div id="suspectList"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="officerPanel" class="hidden">
+      <h2>Officer Roster + Badge Manager</h2>
+      <input id="officerCid" placeholder="Officer CitizenID" />
+      <input id="officerCallsign" placeholder="Callsign" />
+      <input id="officerRank" placeholder="Rank" />
+      <input id="officerPhoto" placeholder="Officer Photo URL" />
+      <input id="officerBadge" placeholder="Badge Image URL" />
+      <button id="saveOfficer">Save Officer Profile</button>
+      <div id="officerList"></div>
+    </section>
+
+    <section id="emsPanel" class="hidden">
+      <h2>EMS System</h2>
+      <input id="patientCid" placeholder="Patient CID" />
+      <input id="severity" placeholder="Severity" />
+      <textarea id="summary" placeholder="Medical Summary"></textarea>
+      <button id="createCase">Create EMS Case</button>
+    </section>
+
+    <section>
+      <h2>Live Bodycams</h2>
+      <div id="bodycamList"></div>
+    </section>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
