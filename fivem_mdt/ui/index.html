@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <title>RadioSystem MDT</title>
+</head>
+<body>
+  <div id="app" class="hidden">
+    <section id="loginPanel" class="hidden login-panel">
+      <h2>MDT Secure Login</h2>
+      <p id="loginHint"></p>
+      <input id="mdtUser" placeholder="MDT Username" />
+      <input id="mdtPass" type="password" placeholder="MDT Password" />
+      <button id="doLogin">Login</button>
+    </section>
+
+    <div id="mainPanels" class="hidden">
+      <header class="top-tabs">
+        <button class="tab active">+ New Event</button>
+        <button class="tab">Event Log</button>
+        <button class="tab">Linked Events</button>
+        <button class="tab">Case File</button>
+        <div class="spacer"></div>
+        <button id="refresh">Refresh</button>
+        <button id="close">Close</button>
+      </header>
+
+      <div class="workspace">
+        <aside class="left-rail">
+          <button id="dispatchToggle">Assign</button>
+          <button id="bodycamToggle">Bodycam</button>
+          <button id="createWarrant">Warrant</button>
+          <button id="createCase">Case</button>
+          <button id="createReport">Report</button>
+          <button id="addEvidence">Evidence</button>
+          <input id="bodycamUrl" placeholder="Bodycam stream URL" />
+        </aside>
+
+        <main class="event-main" id="dispatcherPanel">
+          <div class="event-card">
+            <h1>EVENT CONSOLE</h1>
+            <div id="meta" class="meta-row"></div>
+            <div class="event-grid">
+              <div>
+                <h3>Incoming Dispatch Feed</h3>
+                <ul id="dispatchCalls" class="feed"></ul>
+              </div>
+              <div>
+                <h3>Live Dispatch Map</h3>
+                <canvas id="dispatchMap" width="940" height="430"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <div class="event-log-panel">
+            <h3>Event Narrative</h3>
+            <div id="activeCallList" class="scroll-list"></div>
+          </div>
+        </main>
+
+        <aside class="right-panel">
+          <div class="card-shell">
+            <h3>Unit Tracker</h3>
+            <div id="unitList" class="scroll-list"></div>
+          </div>
+          <div class="card-shell">
+            <h3>Associated Persons</h3>
+            <div id="suspectList" class="scroll-list"></div>
+          </div>
+          <div class="card-shell">
+            <h3>Officer Directory</h3>
+            <div id="officerList" class="scroll-list"></div>
+          </div>
+          <div class="card-shell">
+            <h3>Live Bodycams</h3>
+            <div id="bodycamList" class="scroll-list"></div>
+          </div>
+        </aside>
+      </div>
+
+      <section class="bottom-grid" id="policePanel">
+        <div class="card-shell"><h3>Charges</h3><div id="chargeList" class="scroll-list"></div></div>
+        <div class="card-shell"><h3>Cases</h3><div id="caseList" class="scroll-list"></div></div>
+        <div class="card-shell"><h3>Reports</h3><div id="reportList" class="scroll-list"></div></div>
+        <div class="card-shell"><h3>Evidence</h3><div id="evidenceList" class="scroll-list"></div></div>
+      </section>
+
+      <section id="supervisorPanel" class="hidden form-dock">
+        <h3>Supervisor MDT Access</h3>
+        <input id="accountCid" placeholder="Officer CitizenID" />
+        <input id="accountUser" placeholder="MDT Username" />
+        <input id="accountPass" placeholder="Temporary Password" />
+        <button id="saveAccount">Set/Reset MDT Login</button>
+      </section>
+
+      <section id="casePanel" class="form-dock">
+        <h3>Operations Forms</h3>
+        <div class="dock-grid">
+          <div>
+            <input id="warrantName" placeholder="Suspect Name" />
+            <input id="warrantCid" placeholder="Suspect CID" />
+            <textarea id="warrantNotes" placeholder="Warrant Notes"></textarea>
+            <input id="chargeCode" placeholder="Charge Code" />
+            <input id="chargeTitle" placeholder="Charge Title" />
+            <input id="chargeCategory" placeholder="Category" />
+            <input id="chargeClass" placeholder="Class" />
+            <input id="chargeFine" placeholder="Fine" />
+            <input id="chargeJail" placeholder="Jail Months" />
+            <input id="chargePoints" placeholder="Points" />
+            <textarea id="chargeStatute" placeholder="Statute"></textarea>
+            <textarea id="chargeNotes" placeholder="Charge Notes"></textarea>
+            <button id="addCharge">Add Charge</button>
+          </div>
+          <div>
+            <input id="caseTitle" placeholder="Case Title" />
+            <input id="caseType" placeholder="Case Type" />
+            <input id="casePriority" placeholder="Priority" />
+            <input id="caseSuspectCid" placeholder="Suspect CID" />
+            <input id="caseOfficerCid" placeholder="Officer CID" />
+            <input id="caseUnit" placeholder="Assigned Unit" />
+            <textarea id="caseSummary" placeholder="Case Summary"></textarea>
+            <textarea id="caseChargeIds" placeholder="Charge IDs (comma-separated)"></textarea>
+            <input id="reportCaseId" placeholder="Report Case ID" />
+            <input id="reportType" placeholder="Report Type" />
+            <input id="reportTitle" placeholder="Report Title" />
+            <textarea id="reportNarrative" placeholder="Narrative"></textarea>
+            <textarea id="reportFindings" placeholder="Findings"></textarea>
+            <textarea id="reportRecommendations" placeholder="Recommendations"></textarea>
+          </div>
+          <div>
+            <input id="evidenceCaseId" placeholder="Evidence Case ID" />
+            <input id="evidenceReportId" placeholder="Evidence Report ID" />
+            <input id="evidenceType" placeholder="Evidence Type" />
+            <input id="evidenceTitle" placeholder="Evidence Title" />
+            <textarea id="evidenceDescription" placeholder="Evidence Description"></textarea>
+            <input id="evidenceFileUrl" placeholder="Evidence File URL" />
+            <input id="evidenceThumbUrl" placeholder="Evidence Thumbnail URL" />
+            <textarea id="evidenceMeta" placeholder="Metadata JSON"></textarea>
+            <label><input type="checkbox" id="isPhysicalEvidence" /> Physical evidence</label>
+            <input id="evidenceLocker" placeholder="Locker" />
+            <input id="evidenceShelf" placeholder="Shelf" />
+            <input id="evidenceSeal" placeholder="Seal" />
+            <input id="evidenceWeight" placeholder="Weight grams" />
+            <textarea id="evidenceCondition" placeholder="Condition"></textarea>
+          </div>
+          <div>
+            <input id="suspectCid" placeholder="Suspect CID" />
+            <input id="suspectFirstName" placeholder="First Name" />
+            <input id="suspectLastName" placeholder="Last Name" />
+            <input id="suspectDob" placeholder="DOB" />
+            <input id="suspectPhoto" placeholder="Photo URL" />
+            <input id="suspectPrint" placeholder="Fingerprint URL" />
+            <input id="suspectDna" placeholder="DNA Profile" />
+            <input id="suspectPhone" placeholder="Phone" />
+            <input id="suspectAddress" placeholder="Address" />
+            <input id="suspectParole" placeholder="Parole" />
+            <input id="suspectRisk" placeholder="Risk" />
+            <textarea id="suspectNotes" placeholder="Notes"></textarea>
+            <button id="saveSuspect">Save Suspect</button>
+            <input id="officerCid" placeholder="Officer CID" />
+            <input id="officerCallsign" placeholder="Callsign" />
+            <input id="officerRank" placeholder="Rank" />
+            <input id="officerPhoto" placeholder="Officer Photo URL" />
+            <input id="officerBadge" placeholder="Badge URL" />
+            <button id="saveOfficer">Save Officer</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="emsPanel" class="form-dock">
+        <h3>EMS Intake</h3>
+        <input id="patientCid" placeholder="Patient CID" />
+        <input id="severity" placeholder="Severity" />
+        <textarea id="summary" placeholder="Medical Summary"></textarea>
+        <button id="createCaseEMS">Create EMS Case</button>
+      </section>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
