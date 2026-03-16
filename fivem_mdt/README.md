@@ -13,7 +13,7 @@ Advanced MDT resource with:
 
 ## Install
 1. Copy `fivem_mdt` to your server resources as `rs_mdt`.
-2. Add dependency resources: `qb-core`, `oxmysql`, `ox_lib`.
+2. Add dependency resources: `qb-core`, `oxmysql`.
 3. Import SQL: run `schema.sql`.
 4. Add `ensure rs_mdt` in `server.cfg`.
 5. Use `/mdt` in game.

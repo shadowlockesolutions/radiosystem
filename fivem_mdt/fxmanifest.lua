@@ -8,7 +8,6 @@ description 'QBCore MDT + EMS Console + Adaptive Dispatch'
 version '1.0.0'
 
 shared_scripts {
-    '@ox_lib/init.lua',
     'shared/config.lua'
 }
 
