@@ -1,0 +1,69 @@
+body { margin: 0; font-family: Arial, sans-serif; color: #f2f2f2; background: transparent; }
+.hidden { display: none; }
+#app { width: 94vw; height: 93vh; margin: 1.5vh auto; background: #111827; border: 1px solid #3b82f6; border-radius: 8px; padding: 16px; overflow-y: auto; }
+header { display: flex; justify-content: space-between; align-items: center; }
+.actions { display: flex; gap: 8px; }
+section { margin-top: 14px; padding: 10px; background: #1f2937; border-radius: 6px; }
+.grid-two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.grid-three { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+input, textarea, button, canvas { width: 100%; margin-top: 8px; padding: 8px; border-radius: 4px; border: none; box-sizing: border-box; }
+canvas { background: #0b1220; border: 1px solid #374151; height: auto; }
+label { display: block; margin-top: 8px; }
+label input { width: auto; margin-right: 6px; }
+button { background: #2563eb; color: white; cursor: pointer; }
+.card { padding: 8px; border: 1px solid #374151; border-radius: 6px; margin-bottom: 8px; display: flex; flex-direction: column; gap: 4px; background: #0f172a; }
+.row { display: flex; gap: 8px; }
+img { width: 64px; height: 64px; object-fit: cover; border-radius: 4px; background: #0b1220; }
+a { color: #93c5fd; }
+
+.dispatch-call-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.dispatch-call-card {
+  background: #1e293b;
+  color: #e2e8f0;
+  border: 1px solid #475569;
+  border-radius: 4px;
+  padding: 10px;
+  min-height: 110px;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+  cursor: pointer;
+}
+
+.dispatch-call-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.dispatch-call-actions button {
+  background: #334155;
+  color: #fff;
+  margin-top: 0;
+  padding: 6px;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-card {
+  width: min(560px, 92vw);
+  background: #111827;
+  border: 1px solid #60a5fa;
+  border-radius: 8px;
+  padding: 16px;
+}
+
+
+.modal.hidden {
+  display: none !important;
+}
