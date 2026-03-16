@@ -22,6 +22,8 @@ Advanced MDT resource with:
 - Supervisors (configured by `Config.Supervisor.minPoliceGrade`) can set/reset MDT SQL logins.
 - Accounts are stored in `mdt_accounts` with SHA2 password hashes.
 - If auth is enabled (`Config.MDTAuth.enabled`), users must log in before seeing MDT data.
+- Login accepts hashed (`SHA2`) credentials and can auto-migrate legacy plain-text `password_hash` values on first successful login.
+- For manual SQL setup, `citizenid` can be set to `*` (or left blank) to allow first-login account binding to the player citizenid.
 
 ## Dispatcher live map
 - Units publish coordinates periodically and are rendered on dispatcher map canvas.

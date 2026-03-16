@@ -255,12 +255,37 @@ QBCore.Functions.CreateCallback('rs_mdt:server:login', function(source, cb, user
     local role = getRole(source)
     if not role then cb({ ok = false, message = 'Not authorized role' }) return end
 
+    local user = tostring(username or ''):gsub('^%s+', ''):gsub('%s+$', '')
+    local pass = tostring(password or ''):gsub('^%s+', ''):gsub('%s+$', '')
+    if user == '' or pass == '' then
+        cb({ ok = false, message = 'Username and password are required' })
+        return
+    end
+
     local player = QBCore.Functions.GetPlayer(source)
     local cid = player.PlayerData.citizenid
-    local row = MySQL.single.await('SELECT id, username FROM mdt_accounts WHERE citizenid = ? AND username = ? AND password_hash = SHA2(?, 256) AND active = 1', { cid, username, password })
+
+    local row = MySQL.single.await([[
+        SELECT id, username, citizenid, password_hash
+        FROM mdt_accounts
+        WHERE username = ?
+          AND active = 1
+          AND (citizenid = ? OR citizenid IS NULL OR citizenid = '' OR citizenid = '*')
+          AND (password_hash = SHA2(?, 256) OR password_hash = ?)
+        LIMIT 1
+    ]], { user, cid, pass, pass })
+
     if not row then
         cb({ ok = false, message = 'Invalid MDT credentials' })
         return
+    end
+
+    if row.password_hash == pass then
+        MySQL.update.await('UPDATE mdt_accounts SET password_hash = SHA2(?, 256), updated_at = NOW() WHERE id = ?', { pass, row.id })
+    end
+
+    if not row.citizenid or row.citizenid == '' or row.citizenid == '*' then
+        MySQL.update.await('UPDATE mdt_accounts SET citizenid = ?, updated_at = NOW() WHERE id = ?', { cid, row.id })
     end
 
     AuthSessions[source] = { citizenid = cid, loginAt = os.time() }
