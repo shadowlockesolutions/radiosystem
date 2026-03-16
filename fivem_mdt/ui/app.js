@@ -37,6 +37,16 @@ const post = (action, data = {}) => fetch(`https://${GetParentResourceName()}/${
   body: JSON.stringify(data)
 });
 
+const closeMdtUi = () => {
+  app.classList.add('hidden');
+  callModal.classList.add('hidden');
+  post('close');
+};
+
+const closeCallModalUi = () => {
+  callModal.classList.add('hidden');
+};
+
 const parseName = (charinfo) => {
   try {
     const parsed = typeof charinfo === 'string' ? JSON.parse(charinfo) : (charinfo || {});
@@ -184,7 +194,7 @@ window.addEventListener('message', (event) => {
   }
 });
 
-document.getElementById('close').onclick = () => { app.classList.add('hidden'); post('close'); };
+document.getElementById('close').onclick = () => closeMdtUi();
 document.getElementById('refresh').onclick = async () => {
   const response = await post('refresh');
   const data = await response.json();
@@ -221,4 +231,19 @@ document.getElementById('createCase').onclick = () => {
 document.getElementById('createReport').onclick = () => post('createReport', { case_id: document.getElementById('reportCaseId').value, report_type: document.getElementById('reportType').value, title: document.getElementById('reportTitle').value, narrative: document.getElementById('reportNarrative').value, findings: document.getElementById('reportFindings').value, recommendations: document.getElementById('reportRecommendations').value });
 document.getElementById('addEvidence').onclick = () => post('addEvidence', { case_id: document.getElementById('evidenceCaseId').value, report_id: document.getElementById('evidenceReportId').value, evidence_type: document.getElementById('evidenceType').value, title: document.getElementById('evidenceTitle').value, description: document.getElementById('evidenceDescription').value, file_url: document.getElementById('evidenceFileUrl').value, thumb_url: document.getElementById('evidenceThumbUrl').value, metadata_json: document.getElementById('evidenceMeta').value, is_physical: document.getElementById('isPhysicalEvidence').checked, locker_code: document.getElementById('evidenceLocker').value, shelf_slot: document.getElementById('evidenceShelf').value, seal_number: document.getElementById('evidenceSeal').value, weight_grams: document.getElementById('evidenceWeight').value, condition_note: document.getElementById('evidenceCondition').value });
 
-document.getElementById('closeCallModal').onclick = () => callModal.classList.add('hidden');
+document.getElementById('closeCallModal').onclick = () => closeCallModalUi();
+
+
+callModal.addEventListener('click', (event) => {
+  if (event.target === callModal) closeCallModalUi();
+});
+
+
+document.addEventListener('keydown', (event) => {
+  if (event.key !== 'Escape') return;
+  if (!callModal.classList.contains('hidden')) {
+    closeCallModalUi();
+    return;
+  }
+  if (!app.classList.contains('hidden')) closeMdtUi();
+});

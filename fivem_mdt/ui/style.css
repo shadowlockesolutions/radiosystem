@@ -62,3 +62,8 @@ a { color: #93c5fd; }
   border-radius: 8px;
   padding: 16px;
 }
+
+
+.modal.hidden {
+  display: none !important;
+}
