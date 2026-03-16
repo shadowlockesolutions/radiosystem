@@ -1,0 +1,32 @@
+name: Release rs_mdt package
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'rs_mdt-v*'
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build rs_mdt zip
+        run: |
+          chmod +x scripts/package_rs_mdt.sh
+          ./scripts/package_rs_mdt.sh
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: rs_mdt
+          path: dist/rs_mdt.zip
+
+      - name: Create GitHub release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/rs_mdt.zip
+          generate_release_notes: true
