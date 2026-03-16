@@ -36,3 +36,11 @@ Advanced MDT resource with:
 ## Security
 - Server verifies role before creating/updating police/EMS/investigation records.
 - Dispatcher console requires configured dispatch roles/grades.
+
+## GitHub download / releases
+- This repo includes a GitHub Actions workflow (`.github/workflows/release-rs-mdt.yml`) that builds `rs_mdt.zip` from `fivem_mdt/`.
+- To create a downloadable release ZIP on GitHub:
+  1. Push this repo to GitHub.
+  2. Create and push a tag like `rs_mdt-v1.0.0`.
+  3. The workflow publishes `dist/rs_mdt.zip` as a release asset.
+- You can also run `./scripts/package_rs_mdt.sh` locally to generate `dist/rs_mdt.zip`.
