@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="style.css" />
+  <title>RadioSystem MDT</title>
+</head>
+<body>
+  <div id="app" class="hidden">
+    <header>
+      <h1>Agency Computer System</h1>
+      <div class="actions">
+        <button id="refresh">Refresh</button>
+        <button id="close">Close</button>
+      </div>
+    </header>
+
+    <section id="loginPanel" class="hidden">
+      <h2>MDT Secure Login</h2>
+      <p id="loginHint"></p>
+      <input id="mdtUser" placeholder="MDT Username" />
+      <input id="mdtPass" type="password" placeholder="MDT Password" />
+      <button id="doLogin">Login</button>
+    </section>
+
+    <div id="mainPanels" class="hidden">
+      <section id="meta"></section>
+
+      <section>
+        <h2>Dispatch + Bodycam</h2>
+        <div class="grid-two">
+          <div>
+            <button id="dispatchToggle">Toggle Dispatcher Duty</button>
+            <input id="bodycamUrl" placeholder="Bodycam Stream URL (HLS/WebRTC page)" />
+            <button id="bodycamToggle">Toggle Bodycam Broadcast</button>
+          </div>
+          <div>
+            <h3>Incoming Calls</h3>
+            <ul id="dispatchCalls"></ul>
+          </div>
+        </div>
+      </section>
+
+      <section id="dispatcherPanel" class="hidden">
+        <h2>Dispatcher Live Map</h2>
+        <div class="grid-two">
+          <div>
+            <canvas id="dispatchMap" width="900" height="500"></canvas>
+          </div>
+          <div>
+            <h3>Active Calls</h3>
+            <div id="activeCallList" class="dispatch-call-grid"></div>
+            <h3>Unit Tracker</h3>
+            <div id="unitList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="supervisorPanel" class="hidden">
+        <h2>Supervisor Access Control</h2>
+        <input id="accountCid" placeholder="Officer CitizenID" />
+        <input id="accountUser" placeholder="MDT Username" />
+        <input id="accountPass" placeholder="Temporary Password" />
+        <button id="saveAccount">Set/Reset MDT Login</button>
+      </section>
+
+      <section id="policePanel" class="hidden">
+        <h2>Police Investigations Suite</h2>
+        <div class="grid-two">
+          <div>
+            <h3>Charge Catalog</h3>
+            <input id="chargeCode" placeholder="Code (e.g. PC-211)" />
+            <input id="chargeTitle" placeholder="Charge Title" />
+            <input id="chargeCategory" placeholder="Category" />
+            <input id="chargeClass" placeholder="Class (Felony/Misdemeanor)" />
+            <input id="chargeFine" placeholder="Fine Amount" />
+            <input id="chargeJail" placeholder="Jail Months" />
+            <input id="chargePoints" placeholder="License Points" />
+            <textarea id="chargeStatute" placeholder="Statute Text"></textarea>
+            <textarea id="chargeNotes" placeholder="Charge Notes"></textarea>
+            <button id="addCharge">Add Charge</button>
+            <div id="chargeList"></div>
+            <h3>Create Warrant</h3>
+            <input id="warrantName" placeholder="Suspect Name" />
+            <input id="warrantCid" placeholder="Suspect CID" />
+            <textarea id="warrantNotes" placeholder="Warrant Notes"></textarea>
+            <button id="createWarrant">Create Warrant</button>
+          </div>
+          <div>
+            <h3>Suspect Profile</h3>
+            <input id="suspectCid" placeholder="Suspect CID" />
+            <input id="suspectFirstName" placeholder="First Name" />
+            <input id="suspectLastName" placeholder="Last Name" />
+            <input id="suspectDob" placeholder="DOB" />
+            <input id="suspectPhoto" placeholder="Suspect Photo URL" />
+            <input id="suspectPrint" placeholder="Fingerprint Image URL" />
+            <input id="suspectDna" placeholder="DNA Profile ID" />
+            <input id="suspectPhone" placeholder="Phone" />
+            <input id="suspectAddress" placeholder="Address" />
+            <input id="suspectParole" placeholder="Parole Status" />
+            <input id="suspectRisk" placeholder="Risk Level" />
+            <textarea id="suspectNotes" placeholder="Additional intel"></textarea>
+            <button id="saveSuspect">Save Suspect</button>
+            <div id="suspectList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="casePanel" class="hidden">
+        <h2>Case / Report / Evidence</h2>
+        <div class="grid-three">
+          <div>
+            <h3>Create Case</h3>
+            <input id="caseTitle" placeholder="Case Title" />
+            <input id="caseType" placeholder="Type (criminal/internal/civil)" />
+            <input id="casePriority" placeholder="Priority" />
+            <input id="caseSuspectCid" placeholder="Suspect CID" />
+            <input id="caseOfficerCid" placeholder="Lead Officer CID" />
+            <input id="caseUnit" placeholder="Assigned Unit" />
+            <textarea id="caseSummary" placeholder="Case Summary"></textarea>
+            <textarea id="caseChargeIds" placeholder="Charge IDs (comma-separated)"></textarea>
+            <button id="createCase">Create Case</button>
+            <div id="caseList"></div>
+          </div>
+          <div>
+            <h3>Create Complex Report</h3>
+            <input id="reportCaseId" placeholder="Case ID" />
+            <input id="reportType" placeholder="Type (incident/arrest/afteraction)" />
+            <input id="reportTitle" placeholder="Report Title" />
+            <textarea id="reportNarrative" placeholder="Narrative"></textarea>
+            <textarea id="reportFindings" placeholder="Findings"></textarea>
+            <textarea id="reportRecommendations" placeholder="Recommendations"></textarea>
+            <button id="createReport">Create Report</button>
+            <div id="reportList"></div>
+          </div>
+          <div>
+            <h3>Attach Evidence</h3>
+            <input id="evidenceCaseId" placeholder="Case ID" />
+            <input id="evidenceReportId" placeholder="Report ID (optional)" />
+            <input id="evidenceType" placeholder="Type (photo/video/document/item)" />
+            <input id="evidenceTitle" placeholder="Evidence Title" />
+            <textarea id="evidenceDescription" placeholder="Evidence Description"></textarea>
+            <input id="evidenceFileUrl" placeholder="File URL" />
+            <input id="evidenceThumbUrl" placeholder="Thumbnail URL" />
+            <textarea id="evidenceMeta" placeholder="Metadata JSON"></textarea>
+            <label><input type="checkbox" id="isPhysicalEvidence" /> Physical evidence</label>
+            <input id="evidenceLocker" placeholder="Locker Code" />
+            <input id="evidenceShelf" placeholder="Shelf Slot" />
+            <input id="evidenceSeal" placeholder="Seal Number" />
+            <input id="evidenceWeight" placeholder="Weight grams" />
+            <textarea id="evidenceCondition" placeholder="Condition note"></textarea>
+            <button id="addEvidence">Attach Evidence</button>
+            <div id="evidenceList"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="officerPanel" class="hidden">
+        <h2>Officer Roster + Badge Manager</h2>
+        <input id="officerCid" placeholder="Officer CitizenID" />
+        <input id="officerCallsign" placeholder="Callsign" />
+        <input id="officerRank" placeholder="Rank" />
+        <input id="officerPhoto" placeholder="Officer Photo URL" />
+        <input id="officerBadge" placeholder="Badge Image URL" />
+        <button id="saveOfficer">Save Officer Profile</button>
+        <div id="officerList"></div>
+      </section>
+
+      <section id="emsPanel" class="hidden">
+        <h2>EMS System</h2>
+        <input id="patientCid" placeholder="Patient CID" />
+        <input id="severity" placeholder="Severity" />
+        <textarea id="summary" placeholder="Medical Summary"></textarea>
+        <button id="createCaseEMS">Create EMS Case</button>
+      </section>
+
+      <section>
+        <h2>Live Bodycams</h2>
+        <div id="bodycamList"></div>
+      </section>
+    </div>
+
+    <div id="callModal" class="modal hidden">
+      <div class="modal-card">
+        <h3 id="callModalTitle">Call</h3>
+        <p id="callModalDetails"></p>
+        <p id="callModalCoords"></p>
+        <button id="closeCallModal">Close</button>
+      </div>
+    </div>
+  </div>
+  <script src="app.js"></script>
+</body>
+</html>
